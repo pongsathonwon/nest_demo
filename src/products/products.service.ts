@@ -22,23 +22,13 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    try {
-      const result = await this._prisma.products.update({ where: { id }, data: updateProductDto });
-      console.log(result)
-      return result
-    } catch (err) {
-      console.log(err)
-    }
+    return await this._prisma.products.update({ where: { id }, data: updateProductDto });
+
   }
 
   async remove(id: number) {
-    try {
-      const result = await this._prisma.products.delete({ where: { id } })
-      return result
-    } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        if (err.code === "P2025") throw new NotFoundException()
-      }
-    }
+
+    return await this._prisma.products.delete({ where: { id } })
+
   }
 }
