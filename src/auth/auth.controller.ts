@@ -10,7 +10,6 @@ export class AuthController implements IAuth {
 
   @Post("/signin")
   signIn(@Body() createBody: CreateAuthDto) {
-    console.log(createBody)
     return this.authService.signIn(createBody)
   }
 

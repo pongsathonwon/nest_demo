@@ -4,20 +4,30 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import * as bcrypt from "bcrypt"
 
 @Injectable()
 export class AuthService implements IAuth {
     constructor(private _prisma: PrismaService, private _jwt: JwtService) { }
+    private async hashing(password: string) {
+        const salt = 10
+        return await bcrypt.hash(password, salt)
+    }
+    private async compare(plain: string, hashed: string) {
+        return await bcrypt.compare(plain, hashed)
+    }
     async signIn(createBody: CreateAuthDto) {
-        console.log(createBody)
-        const newUser = await this._prisma.users.create({ data: createBody })
+        const { username, email, password } = createBody
+        const hashed = await this.hashing(password)
+        const newUser = await this._prisma.users.create({ data: { username, email, password: hashed } })
         return { accessToken: this._jwt.sign({ userId: newUser.id, username: newUser.username }) }
     }
 
     async logIn(loginBody: LoginAuthDto) {
-        const user = await this._prisma.users.findUnique({ where: { email: loginBody.email } })
+        const { email, password } = loginBody
+        const user = await this._prisma.users.findUnique({ where: { email } })
         if (!user) throw new NotFoundException(`invalid email or password`)
-        const isCorrectPassword = user.password === loginBody.password
+        const isCorrectPassword = this.compare(password, user.password)
         if (!isCorrectPassword) throw new NotFoundException(`invalid email or password`)
         return { accessToken: this._jwt.sign({ userId: user.id, username: user.username }) }
     }
