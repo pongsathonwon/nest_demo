@@ -5,13 +5,13 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import * as bcrypt from "bcrypt"
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService implements IAuth {
-    constructor(private _prisma: PrismaService, private _jwt: JwtService) { }
+    constructor(private _prisma: PrismaService, private _jwt: JwtService, private _config: ConfigService) { }
     private async hashing(password: string) {
-        const salt = 10
-        return await bcrypt.hash(password, salt)
+        return await bcrypt.hash(password, parseInt(this._config.get("SALT")))
     }
     private async compare(plain: string, hashed: string) {
         return await bcrypt.compare(plain, hashed)

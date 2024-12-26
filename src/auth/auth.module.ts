@@ -5,11 +5,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './auth.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
 export const SECRET = "mysrc"
 @Module({
-  imports: [PassportModule, JwtModule.register({ secret: SECRET, signOptions: { expiresIn: "5m" } })],
+  imports: [PassportModule, JwtModule.registerAsync({
+    imports: [ConfigModule],
+    useFactory: async (config: ConfigService) => ({ secret: config.get("SECRET"), signOptions: { expiresIn: "1h" } }),
+    inject: [ConfigService]
+  })],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, PrismaService],
 })
