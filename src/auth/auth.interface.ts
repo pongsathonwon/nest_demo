@@ -1,8 +1,17 @@
+import { Response } from "express"
 import { AccessToken } from "./auth.type"
 import { CreateAuthDto } from "./dto/create-auth.dto"
 import { LoginAuthDto } from "./dto/login-auth.dto"
-export interface IAuth {
-    signIn(payload: CreateAuthDto): Promise<AccessToken<unknown>>
-    logIn(payload: LoginAuthDto): Promise<AccessToken<unknown>>
-    logOut(): Promise<void>
+
+export type MaybePromise<T> = T | Promise<T>
+export interface Signin {
+    signin(...arg: unknown[]): MaybePromise<unknown>
+}
+
+export interface Login {
+    login(...arg: unknown[]): MaybePromise<unknown>
+}
+
+export interface Logout {
+    logout(...arg: unknown[]): MaybePromise<unknown>
 }

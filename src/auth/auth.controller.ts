@@ -1,25 +1,25 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IAuth } from './auth.interface';
+import { Login, Logout, Signin } from './auth.interface';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
 
 @Controller('auth')
-export class AuthController implements IAuth {
+export class AuthController implements Signin, Login, Logout {
   constructor(private readonly authService: AuthService) { }
 
   @Post("/signin")
-  signIn(@Body() createBody: CreateAuthDto) {
-    return this.authService.signIn(createBody)
+  signin(@Body() createBody: CreateAuthDto) {
+    return this.authService.signin(createBody)
   }
 
   @Post("/login")
-  logIn(@Body() loginBody: LoginAuthDto) {
-    return this.authService.logIn(loginBody)
+  login(@Body() loginBody: LoginAuthDto) {
+    return this.authService.login(loginBody)
   }
 
   @Post("/logout")
-  logOut() {
-    return this.authService.logOut()
+  logout() {
+    //jwt is stateless cannot logout unless impl refresh token > remove refresh token
   }
 }
