@@ -16,6 +16,9 @@ export class AuthService implements IAuth {
     private async compare(plain: string, hashed: string) {
         return await bcrypt.compare(plain, hashed)
     }
+    async checkAuth(id: number) {
+        return this._prisma.users.findUnique({ where: { id } })
+    }
     async signIn(createBody: CreateAuthDto) {
         const { username, email, password } = createBody
         const hashed = await this.hashing(password)

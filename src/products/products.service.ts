@@ -18,7 +18,7 @@ export class ProductsService {
   async findOne(id: number) {
     const result = await this._prisma.products.findUnique({ where: { id } })
     if (!result) throw new NotFoundException()
-    return result
+    return { ...result, price: result.price.toNumber() }
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
