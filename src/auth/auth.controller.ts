@@ -1,23 +1,26 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IAuth } from './auth.interface';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { CreateAuthDto } from './dto/create-auth.dto';
 
 @Controller('auth')
 export class AuthController implements IAuth {
   constructor(private readonly authService: AuthService) { }
 
-  @Post("/auth/signin")
-  signIn() {
-    this.authService.signIn()
+  @Post("/signin")
+  signIn(@Body() createBody: CreateAuthDto) {
+    console.log(createBody)
+    return this.authService.signIn(createBody)
   }
 
-  @Post("/auth/login")
-  logIn() {
-    this.authService.logIn()
+  @Post("/login")
+  logIn(@Body() loginBody: LoginAuthDto) {
+    return this.authService.logIn(loginBody)
   }
 
-  @Post("/auth/logout")
+  @Post("/logout")
   logOut() {
-    this.authService.logOut()
+    return this.authService.logOut()
   }
 }
